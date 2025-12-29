@@ -2,5 +2,15 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [
+    { "path": "./apps/api" },
+    { "path": "./apps/api-e2e" },
+    { "path": "./apps/worker" },
+    { "path": "./apps/worker-e2e" },
+
+    { "path": "./packages/shared" },
+    { "path": "./packages/queue" },
+    { "path": "./packages/storage" },
+    { "path": "./packages/image" }
+  ]
 }

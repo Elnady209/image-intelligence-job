@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: image-intelligence-redis
+    ports:
+      - "6379:6379"
+  
+  mongodb:
+    image: mongo:7
+    container_name: image-intelligence-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  minio:
+    image: minio/minio
+    container_name: image-intelligence-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    volumes:
+      - minio-data:/data
+
+volumes:
+  minio-data:
+  mongo_data:

@@ -1,104 +1,241 @@
-# New Nx Repository
+# Image Intelligence Platform
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+## 1. Resumen Ejecutivo (para reclutadores)
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+**Image Intelligence Platform** es una aplicación backend orientada al análisis automático de imágenes. Permite recibir imágenes desde un cliente, procesarlas de forma asíncrona y escalable, extraer información relevante (metadatos, colores dominantes, brillo, hash, etc.), almacenarlas de manera eficiente y exponer los resultados a través de una API.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+El proyecto está diseñado con una **arquitectura moderna, desacoplada y escalable**, inspirada en sistemas reales de producción:
 
-## Generate a library
+* Procesamiento asíncrono mediante colas
+* Separación clara de responsabilidades
+* Uso de almacenamiento de objetos para binarios
+* Persistencia flexible para datos de análisis
 
-```sh
-npx nx g @nx/js:lib packages/pkg1 --publishable --importPath=@my-org/pkg1
+Esta solución es ideal como base para sistemas de **Computer Vision**, **IA aplicada a imágenes**, **moderación de contenido**, **clasificación visual** o **análisis multimedia**.
+
+---
+
+## 2. Qué problema resuelve
+
+Procesar imágenes de forma síncrona suele generar:
+
+* APIs lentas
+* alto consumo de memoria
+* poca escalabilidad
+
+Image Intelligence Platform resuelve esto mediante:
+
+* procesamiento en segundo plano (workers)
+* almacenamiento eficiente de imágenes
+* persistencia flexible de resultados
+* arquitectura preparada para crecer (IA, ML, búsquedas avanzadas)
+
+---
+
+## 3. Arquitectura General
+
+La aplicación está construida como un **monorepo con Nx**, lo que permite compartir código y mantener una estructura clara.
+
+### Componentes principales
+
+1. **API (NestJS)**
+
+   * Recibe imágenes
+   * Publica jobs en una cola
+   * Expone endpoints de consulta
+   * No procesa imágenes
+
+2. **Worker (NestJS + BullMQ)**
+
+   * Consume jobs desde Redis
+   * Descarga imágenes desde MinIO
+   * Analiza imágenes
+   * Guarda resultados en MongoDB
+
+3. **Redis**
+
+   * Coordinación de trabajos (BullMQ)
+
+4. **MinIO**
+
+   * Almacenamiento de imágenes (Object Storage)
+
+5. **MongoDB**
+
+   * Persistencia de resultados de análisis
+   * Esquema flexible (documental)
+
+---
+
+## 4. Flujo de la aplicación
+
+1. El cliente envía una imagen a la API
+2. La API:
+
+   * guarda la imagen en MinIO
+   * envía un job a la cola (Redis)
+3. El worker:
+
+   * consume el job
+   * descarga la imagen desde MinIO
+   * analiza la imagen
+   * guarda los resultados en MongoDB
+4. La API expone endpoints para consultar:
+
+   * lista de imágenes procesadas
+   * metadatos y análisis
+   * imagen original desde MinIO
+
+Este flujo desacopla completamente la recepción de imágenes del procesamiento pesado.
+
+---
+
+## 5. Tecnologías utilizadas
+
+### Backend
+
+* **Node.js**
+* **TypeScript (strict)**
+* **NestJS** (API y Worker)
+* **Nx Monorepo**
+
+### Procesamiento asíncrono
+
+* **BullMQ**
+* **Redis**
+
+### Almacenamiento
+
+* **MinIO** (Object Storage compatible con S3)
+* **MongoDB** (Base de datos documental)
+
+### Infraestructura
+
+* **Docker / Docker Compose**
+
+---
+
+## 6. Estructura del Monorepo
+
+```
+image-intelligence-v2/
+├─ apps/
+│  ├─ api/          # API REST
+│  └─ worker/       # Procesamiento asíncrono
+│
+├─ packages/
+│  ├─ shared/       # DTOs y tipos compartidos
+│  ├─ queue/        # Configuración BullMQ
+│  ├─ storage/     # Cliente MinIO
+│  └─ image/        # Utilidades de análisis
+│
+├─ docker-compose.yml
+└─ nx.json
 ```
 
-## Run tasks
+---
 
-To build the library use:
+## 7. Diseño de datos
 
-```sh
-npx nx build pkg1
+### Imagen (MongoDB)
+
+Cada imagen analizada se guarda como un documento flexible:
+
+```json
+{
+  "filename": "1764558900283.png",
+  "bucket": "images",
+  "metadata": {
+    "format": "png",
+    "size": 874354,
+    "width": 800,
+    "height": 800,
+    "aspectRatio": 1,
+    "orientation": "square",
+    "hasAlpha": false,
+    "dominantColor": { "r": 8, "g": 8, "b": 8 }
+  },
+  "palette": [
+    { "r": 8, "g": 8, "b": 8 },
+    { "r": 120, "g": 110, "b": 100 }
+  ],
+  "brightness": "dark",
+  "hash": "3a6e205d28c9...",
+  "status": "processed",
+  "createdAt": "2025-12-28T21:10:00Z"
+}
 ```
 
-To run any task with Nx use:
+Este diseño permite:
 
-```sh
-npx nx <target> <project-name>
-```
+* agregar nuevos campos sin migraciones
+* guardar resultados de IA futuros
+* versionar análisis
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+---
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## 8. Endpoints principales
 
-## Versioning and releasing
+### API
 
-To version and release the library use
+| Método | Endpoint         | Descripción                 |
+| ------ | ---------------- | --------------------------- |
+| POST   | /images/upload   | Sube imagen y crea job      |
+| GET    | /images          | Lista imágenes analizadas   |
+| GET    | /images/:id      | Detalle de análisis         |
+| GET    | /images/:id/file | Imagen original desde MinIO |
 
-```
-npx nx release
-```
+---
 
-Pass `--dry-run` to see what would happen without actually releasing the library.
+## 9. Decisiones de arquitectura (importantes)
 
-[Learn more about Nx release &raquo;](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+* ❌ No se envían imágenes por Redis
+* ✅ Solo se pasan referencias (bucket + filename)
+* ✅ Los workers son stateless
+* ✅ Separación clara API / Worker
+* ✅ MongoDB para flexibilidad
+* ✅ MinIO para binarios
 
-## Keep TypeScript project references up to date
+Estas decisiones hacen que el sistema sea:
 
-Nx automatically updates TypeScript [project references](https://www.typescriptlang.org/docs/handbook/project-references.html) in `tsconfig.json` files to ensure they remain accurate based on your project dependencies (`import` or `require` statements). This sync is automatically done when running tasks such as `build` or `typecheck`, which require updated references to function correctly.
+* escalable
+* mantenible
+* fácil de extender
 
-To manually trigger the process to sync the project graph dependencies information to the TypeScript project references, run the following command:
+---
 
-```sh
-npx nx sync
-```
+## 10. Estado actual del proyecto
 
-You can enforce that the TypeScript project references are always in the correct state when running in CI by adding a step to your CI job configuration that runs the following command:
+Actualmente el sistema:
 
-```sh
-npx nx sync:check
-```
+* recibe imágenes
+* las almacena en MinIO
+* las procesa de forma asíncrona
+* extrae metadatos y colores
+* guarda resultados en MongoDB
+* expone endpoints de consulta
 
-[Learn more about nx sync](https://nx.dev/reference/nx-commands#sync)
+---
 
-## Nx Cloud
+## 11. Próximos pasos (roadmap)
 
-Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
+* Refactorización de módulos
+* Versionado de análisis
+* Estados de job más avanzados
+* Integración con IA (clasificación, etiquetas)
+* Búsqueda por similitud
+* Dashboard frontend
+* Autenticación
 
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+---
 
-### Set up CI (non-Github Actions CI)
+## 12. Conclusión
 
-**Note:** This is only required if your CI provider is not GitHub Actions.
+Image Intelligence Platform demuestra:
 
-Use the following command to configure a CI workflow for your workspace:
+* dominio de arquitectura backend moderna
+* uso correcto de colas y workers
+* buenas prácticas en NestJS
+* diseño orientado a escalabilidad
 
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/js?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Es una base sólida para sistemas reales de análisis de imágenes y aplicaciones con IA.
