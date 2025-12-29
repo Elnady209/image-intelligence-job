@@ -1,10 +1,20 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ImageModule } from './image/image.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/image-intelligence'),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRootAsync({
+      useFactory: (config: ConfigService) => ({
+        uri: config.get<string>('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
+    // MongooseModule.forRoot('mongodb://localhost:27017/image-intelligence'),
     ImageModule
   ],
   controllers: [],

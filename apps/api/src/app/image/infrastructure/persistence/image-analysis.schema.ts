@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-@Schema({ timestamps: true })
-export class ImageAnalysis extends Document {
+export type ImageAnalysisDocument =
+  HydratedDocument<ImageAnalysisSchemaClass>;
+
+@Schema({
+  timestamps: true,
+  collection: 'imageanalyses'
+})
+export class ImageAnalysisSchemaClass {
   @Prop({ required: true })
   filename!: string;
 
@@ -23,5 +29,4 @@ export class ImageAnalysis extends Document {
   hash!: string;
 }
 
-export const ImageAnalysisSchema =
-  SchemaFactory.createForClass(ImageAnalysis);
+export const ImageAnalysisSchema = SchemaFactory.createForClass(ImageAnalysisSchemaClass);
