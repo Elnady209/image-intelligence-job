@@ -7,21 +7,15 @@ export async function extractPalette(
   buffer: Buffer,
   options = { size: 64, colors: 5 }
 ): Promise<RGB[]> {
-  console.log('extractPalette init');
   const img = await loadImage(buffer);
-  console.log('img ', img);
 
   const canvas = createCanvas(options.size, options.size);
-  console.log('canvas ', canvas);
   const ctx = canvas.getContext('2d');
-  console.log('ctx ', ctx);
 
   ctx.drawImage(img, 0, 0, options.size, options.size);
 
   const { data } = ctx.getImageData(0, 0, options.size, options.size);
-
   const colorMap = new Map<string, { color: RGB; count: number }>();
-  console.log('data.length ', data.length);
 
   for (let i = 0; i < data.length; i += 4) {
     const r = data[i];

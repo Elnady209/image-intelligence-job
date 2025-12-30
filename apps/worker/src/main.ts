@@ -4,6 +4,7 @@ import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   await NestFactory.createApplicationContext(AppModule);
-  Logger.log('🧠 Worker started and listening for jobs');
+  const logger = new Logger('Worker');
+  logger.log('🧠 Worker started and listening for jobs');
 }
 bootstrap();

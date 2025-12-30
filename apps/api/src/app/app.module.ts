@@ -14,7 +14,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
-    // MongooseModule.forRoot('mongodb://localhost:27017/image-intelligence'),
     ImageModule
   ],
   controllers: [],
