@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ImageAnalysisSchemaClass, ImageAnalysisSchema } from './infrastructure/persistence/image-analysis.schema';
 import { ImageService } from './image.service';
 import { MinioImageStorageService } from './infrastructure/storage/image-storage.service';
+import { MinioClientProvider } from './infrastructure/storage/minio.provider';
 
 @Module({
     imports: [
@@ -12,7 +13,7 @@ import { MinioImageStorageService } from './infrastructure/storage/image-storage
         ]),
     ],
     controllers: [ImageController],
-    providers: [ImageService, Logger,
+    providers: [ImageService, MinioClientProvider, Logger,
         {
             provide: 'ImageStorage',
             useClass: MinioImageStorageService,

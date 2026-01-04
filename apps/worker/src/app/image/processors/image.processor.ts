@@ -1,11 +1,11 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 import { InjectModel } from '@nestjs/mongoose';
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { minioClient } from '@image-intelligence-v2/storage';
 import { ImageAnalyzerService } from '../services/image.analyzer';
 import { ImageAnalysisSchemaClass } from '../schemas/image-analysis.schema';
+import type { ImageStorage } from '../infrastructure/storage/image-storage.service';
 
 @Processor('image-processing')
 export class ImageProcessor extends WorkerHost {
@@ -15,6 +15,8 @@ export class ImageProcessor extends WorkerHost {
     private readonly analyzer: ImageAnalyzerService,
     @InjectModel(ImageAnalysisSchemaClass.name)
     private readonly imageModel: Model<ImageAnalysisSchemaClass>,
+    @Inject('ImageStorage')
+    private readonly storage: ImageStorage,
   ) {
     super();
   }
@@ -26,7 +28,7 @@ export class ImageProcessor extends WorkerHost {
 
     const { bucket, filename } = job.data;
 
-    const stream = await minioClient.getObject(bucket, filename);
+    const stream = await this.storage.getObject(filename);
     const buffer = await this.streamToBuffer(stream);
 
     const analysis = await this.analyzer.analyze(buffer);
