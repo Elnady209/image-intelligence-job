@@ -1,5 +1,7 @@
 # Image Intelligence Platform
 
+<img width="700" height="519" alt="image" src="https://github.com/user-attachments/assets/28794e87-d99b-4c4b-94cc-af5a6d2a58bc" />
+
 ## 1. Resumen Ejecutivo
 
 **Image Intelligence Platform** es una aplicación backend orientada al análisis automático de imágenes. Permite recibir imágenes desde un cliente, procesarlas de forma asíncrona y escalable, extraer información relevante (metadatos, colores dominantes, paleta, brillo, hash, etc.), almacenarlas de manera eficiente y exponer los resultados a través de una API.
